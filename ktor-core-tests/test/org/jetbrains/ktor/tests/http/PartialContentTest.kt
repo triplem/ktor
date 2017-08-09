@@ -241,8 +241,8 @@ class PartialContentTest {
         return true
     }
 
-    private fun BufferedReader.scanHeaders(): ValuesMap {
-        val headers = ValuesMapBuilder(true)
+    private fun BufferedReader.scanHeaders(): Parameters {
+        val headers = ParametersBuilder(true)
 
         do {
             val line = readLine()

@@ -10,7 +10,7 @@ fun ApplicationCall.push(pathAndQuery: String) {
     push(path, parseQueryString(query))
 }
 
-fun ApplicationCall.push(encodedPath: String, parameters: ValuesMap) {
+fun ApplicationCall.push(encodedPath: String, parameters: Parameters) {
     push {
         url.encodedPath = encodedPath
         url.parameters.clear()
@@ -23,7 +23,7 @@ fun ApplicationCall.push(block: ResponsePushBuilder.() -> Unit) {
 }
 
 @Deprecated("Use call.push() instead")
-fun ApplicationResponse.push(encodedPath: String, parameters: ValuesMap) {
+fun ApplicationResponse.push(encodedPath: String, parameters: Parameters) {
     call.push(encodedPath, parameters)
 }
 

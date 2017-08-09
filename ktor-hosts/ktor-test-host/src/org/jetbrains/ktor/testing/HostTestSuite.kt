@@ -37,7 +37,7 @@ abstract class HostTestSuite<THost : ApplicationHost>(hostFactory: ApplicationHo
         withUrl("/") {
             assertEquals(200, status.value)
 
-            val fields = ValuesMapBuilder(true)
+            val fields = ParametersBuilder(true)
             fields.appendAll(headers)
 
             fields.remove(HttpHeaders.Date) // Do not check for Date field since it's unstable
@@ -127,9 +127,9 @@ abstract class HostTestSuite<THost : ApplicationHost>(hostFactory: ApplicationHo
     fun testRequestContentFormData() {
         createAndStartServer {
             handle {
-                val valuesMap = call.tryReceive<ValuesMap>()
-                if (valuesMap != null)
-                    call.respond(valuesMap.formUrlEncode())
+                val parameters = call.tryReceive<Parameters>()
+                if (parameters != null)
+                    call.respond(parameters.formUrlEncode())
                 else
                     call.respond(HttpStatusCode.UnsupportedMediaType)
             }
@@ -140,7 +140,7 @@ abstract class HostTestSuite<THost : ApplicationHost>(hostFactory: ApplicationHo
             header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
             body = {
                 it.bufferedWriter().use {
-                    valuesOf("a" to listOf("1")).formUrlEncodeTo(it)
+                    parametersOf("a" to listOf("1")).formUrlEncodeTo(it)
                 }
             }
         }) {
@@ -510,7 +510,7 @@ abstract class HostTestSuite<THost : ApplicationHost>(hostFactory: ApplicationHo
                     call.receiveChannel().copyTo(buffer)
 
                     call.respond(object : FinalContent.ReadChannelContent() {
-                        override val headers: ValuesMap get() = ValuesMap.Empty
+                        override val headers: Parameters get() = Parameters.Empty
                         override fun readFrom() = buffer.toByteArray().toReadChannel()
                     })
                 }

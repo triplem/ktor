@@ -12,7 +12,7 @@ class URLBuilder(
         var user: String? = null,
         var password: String? = null,
         var encodedPath: String = "/",
-        val parameters: ValuesMapBuilder = ValuesMapBuilder(),
+        val parameters: ParametersBuilder = ParametersBuilder(),
         var fragment: String = ""
 ) {
     fun path(vararg components: String) {

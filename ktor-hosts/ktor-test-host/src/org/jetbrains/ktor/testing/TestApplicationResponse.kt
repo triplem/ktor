@@ -22,8 +22,8 @@ class TestApplicationResponse(call: TestApplicationCall) : BaseApplicationRespon
     override fun setStatus(statusCode: HttpStatusCode) {}
 
     override val headers: ResponseHeaders = object : ResponseHeaders() {
-        private val headersMap = ValuesMapBuilder(true)
-        private val headers: ValuesMap by lazy { headersMap.build() }
+        private val headersMap = ParametersBuilder(true)
+        private val headers: Parameters by lazy { headersMap.build() }
 
         override fun hostAppendHeader(name: String, value: String) {
             if (closed)

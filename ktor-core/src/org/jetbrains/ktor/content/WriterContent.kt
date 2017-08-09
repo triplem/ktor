@@ -12,8 +12,8 @@ import java.nio.charset.*
 fun WriterContent(body: suspend Writer.() -> Unit, charset: Charset) = WriterContent(body, ContentType.Text.Plain.withCharset(charset))
 
 class WriterContent(private val body: suspend Writer.() -> Unit, private val contentType: ContentType, override val status: HttpStatusCode? = null) : FinalContent.WriteChannelContent() {
-    override val headers: ValuesMap
-        get() = ValuesMap.build(true) { contentType(contentType) }
+    override val headers: Parameters
+        get() = Parameters.build(true) { contentType(contentType) }
 
     override suspend fun writeTo(channel: WriteChannel) {
         val charset = contentType.charset() ?: Charsets.UTF_8

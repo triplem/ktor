@@ -46,7 +46,7 @@ fun ApplicationReceivePipeline.installDefaultTransformations() {
             InputStream::class -> value.inputStream()
             MultiPartData::class -> value.multiPartData()
             String::class -> value.readText()
-            ValuesMap::class -> {
+            Parameters::class -> {
                 val contentType = value.request.contentType()
                 when {
                     contentType.match(ContentType.Application.FormUrlEncoded) -> {
@@ -55,7 +55,7 @@ fun ApplicationReceivePipeline.installDefaultTransformations() {
                     }
                     contentType.match(ContentType.MultiPart.FormData) -> {
                         val items = value.multiPartData().parts.filterIsInstance<PartData.FormItem>()
-                        ValuesMap.build {
+                        Parameters.build {
                             items.forEach {
                                 it.partName?.let { name -> append(name, it.value) }
                             }

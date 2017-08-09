@@ -47,8 +47,7 @@ class TestHostMultipartTest {
                     PartData.FormItem(
                             "plain field",
                             dispose = {},
-                            partHeaders = valuesOf(
-                                    HttpHeaders.ContentDisposition to listOf(ContentDisposition.File.withParameter(ContentDisposition.Parameters.Name, "field1").toString())
+                            partHeaders = parametersOf(HttpHeaders.ContentDisposition to listOf(ContentDisposition.File.withParameter(ContentDisposition.Parameters.Name, "field1").toString())
                             )
                     )
             )
@@ -77,13 +76,12 @@ class TestHostMultipartTest {
                     PartData.FileItem(
                             streamProvider = { "file content".toByteArray().inputStream() },
                             dispose = {},
-                            partHeaders = valuesOf(
-                                    HttpHeaders.ContentDisposition to listOf(
-                                            ContentDisposition.File
-                                                    .withParameter(ContentDisposition.Parameters.Name, "fileField")
-                                                    .withParameter(ContentDisposition.Parameters.FileName, "file.txt")
-                                                    .toString()
-                                    )
+                            partHeaders = parametersOf(HttpHeaders.ContentDisposition to listOf(
+                                    ContentDisposition.File
+                                            .withParameter(ContentDisposition.Parameters.Name, "fileField")
+                                            .withParameter(ContentDisposition.Parameters.FileName, "file.txt")
+                                            .toString()
+                            )
                             )
                     )
             )

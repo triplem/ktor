@@ -2,11 +2,11 @@ package org.jetbrains.ktor.util
 
 import java.util.*
 
-interface ValuesMap {
+interface Parameters {
     companion object {
-        val Empty: ValuesMap = ValuesMapImpl()
+        val Empty: Parameters = ParametersImpl()
 
-        inline fun build(caseInsensitiveKey: Boolean = false, body: ValuesMapBuilder.() -> Unit): ValuesMap = ValuesMapBuilder(caseInsensitiveKey).apply(body).build()
+        inline fun build(caseInsensitiveKey: Boolean = false, body: ParametersBuilder.() -> Unit): Parameters = ParametersBuilder(caseInsensitiveKey).apply(body).build()
     }
 
     val caseInsensitiveKey: Boolean
@@ -24,7 +24,7 @@ interface ValuesMap {
     fun isEmpty(): Boolean
 }
 
-private class ValuesMapSingleImpl(override val caseInsensitiveKey: Boolean, val name: String, val values: List<String>) : ValuesMap {
+private class ParametersSingleImpl(override val caseInsensitiveKey: Boolean, val name: String, val values: List<String>) : Parameters {
     override fun getAll(name: String): List<String>? = if (this.name.equals(name, caseInsensitiveKey)) values else null
     override fun entries(): Set<Map.Entry<String, List<String>>> = setOf(object : Map.Entry<String, List<String>> {
         override val key: String = name
@@ -34,11 +34,11 @@ private class ValuesMapSingleImpl(override val caseInsensitiveKey: Boolean, val 
 
     override fun isEmpty(): Boolean = false
     override fun names(): Set<String> = setOf(name)
-    override fun toString() = "ValuesMap(case=${!caseInsensitiveKey}) ${entries()}"
+    override fun toString() = "Parameters(case=${!caseInsensitiveKey}) ${entries()}"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ValuesMap) return false
+        if (other !is Parameters) return false
         if (caseInsensitiveKey != other.caseInsensitiveKey) return false
         return entriesEquals(entries(), other.entries())
     }
@@ -50,7 +50,7 @@ private class ValuesMapSingleImpl(override val caseInsensitiveKey: Boolean, val 
     override fun hashCode() = entriesHashCode(entries(), 31 * caseInsensitiveKey.hashCode())
 }
 
-private class ValuesMapImpl(override val caseInsensitiveKey: Boolean = false, private val values: Map<String, List<String>> = emptyMap()) : ValuesMap {
+private class ParametersImpl(override val caseInsensitiveKey: Boolean = false, private val values: Map<String, List<String>> = emptyMap()) : Parameters {
     override operator fun get(name: String) = listForKey(name)?.firstOrNull()
     override fun getAll(name: String): List<String>? = listForKey(name)
 
@@ -63,11 +63,11 @@ private class ValuesMapImpl(override val caseInsensitiveKey: Boolean = false, pr
     override fun forEach(body: (String, List<String>) -> Unit) = values.forEach(body)
 
     private fun listForKey(key: String): List<String>? = values[key]
-    override fun toString() = "ValuesMap(case=${!caseInsensitiveKey}) ${entries()}"
+    override fun toString() = "Parameters(case=${!caseInsensitiveKey}) ${entries()}"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ValuesMap) return false
+        if (other !is Parameters) return false
         if (caseInsensitiveKey != other.caseInsensitiveKey) return false
         return entriesEquals(entries(), other.entries())
     }
@@ -75,7 +75,7 @@ private class ValuesMapImpl(override val caseInsensitiveKey: Boolean = false, pr
     override fun hashCode() = entriesHashCode(entries(), 31 * caseInsensitiveKey.hashCode())
 }
 
-class ValuesMapBuilder(val caseInsensitiveKey: Boolean = false, size: Int = 8) {
+class ParametersBuilder(val caseInsensitiveKey: Boolean = false, size: Int = 8) {
     private val values: MutableMap<String, MutableList<String>> = if (caseInsensitiveKey) CaseInsensitiveMap(size) else LinkedHashMap(size)
     private var built = false
 
@@ -98,14 +98,14 @@ class ValuesMapBuilder(val caseInsensitiveKey: Boolean = false, size: Int = 8) {
         ensureListForKey(name, 1).add(value)
     }
 
-    fun appendAll(valuesMap: ValuesMap) {
-        valuesMap.forEach { name, values ->
+    fun appendAll(parameters: Parameters) {
+        parameters.forEach { name, values ->
             appendAll(name, values)
         }
     }
 
-    fun appendMissing(valuesMap: ValuesMap) {
-        valuesMap.forEach { name, values ->
+    fun appendMissing(parameters: Parameters) {
+        parameters.forEach { name, values ->
             appendMissing(name, values)
         }
     }
@@ -136,10 +136,10 @@ class ValuesMapBuilder(val caseInsensitiveKey: Boolean = false, size: Int = 8) {
         values.clear()
     }
 
-    fun build(): ValuesMap {
+    fun build(): Parameters {
         require(!built) { "ValueMapBuilder can only build single ValueMap" }
         built = true
-        return ValuesMapImpl(caseInsensitiveKey, values)
+        return ParametersImpl(caseInsensitiveKey, values)
     }
 
     private fun ensureListForKey(key: String, size: Int): MutableList<String> {
@@ -159,48 +159,48 @@ class ValuesMapBuilder(val caseInsensitiveKey: Boolean = false, size: Int = 8) {
     private fun listForKey(key: String): MutableList<String>? = values[key]
 }
 
-fun valuesOf(vararg pairs: Pair<String, List<String>>, caseInsensitiveKey: Boolean = false): ValuesMap {
-    return ValuesMapImpl(caseInsensitiveKey, pairs.asList().toMap())
+fun parametersOf(vararg pairs: Pair<String, List<String>>, caseInsensitiveKey: Boolean = false): Parameters {
+    return ParametersImpl(caseInsensitiveKey, pairs.asList().toMap())
 }
 
-fun valuesOf(pair: Pair<String, List<String>>, caseInsensitiveKey: Boolean = false): ValuesMap {
-    return ValuesMapSingleImpl(caseInsensitiveKey, pair.first, pair.second)
+fun parametersOf(pair: Pair<String, List<String>>, caseInsensitiveKey: Boolean = false): Parameters {
+    return ParametersSingleImpl(caseInsensitiveKey, pair.first, pair.second)
 }
 
-fun valuesOf(name: String, value: List<String>, caseInsensitiveKey: Boolean = false): ValuesMap {
-    return ValuesMapSingleImpl(caseInsensitiveKey, name, value)
+fun parametersOf(name: String, value: List<String>, caseInsensitiveKey: Boolean = false): Parameters {
+    return ParametersSingleImpl(caseInsensitiveKey, name, value)
 }
 
-fun valuesOf(): ValuesMap {
-    return ValuesMap.Empty
+fun parametersOf(): Parameters {
+    return Parameters.Empty
 }
 
-fun valuesOf(map: Map<String, Iterable<String>>, caseInsensitiveKey: Boolean = false): ValuesMap {
+fun parametersOf(map: Map<String, Iterable<String>>, caseInsensitiveKey: Boolean = false): Parameters {
     val size = map.size
     if (size == 1) {
         val entry = map.entries.single()
-        return ValuesMapSingleImpl(caseInsensitiveKey, entry.key, entry.value.toList())
+        return ParametersSingleImpl(caseInsensitiveKey, entry.key, entry.value.toList())
     }
     val values: MutableMap<String, List<String>> = if (caseInsensitiveKey) CaseInsensitiveMap(size) else LinkedHashMap(size)
     map.entries.forEach { values.put(it.key, it.value.toList()) }
-    return ValuesMapImpl(caseInsensitiveKey, values)
+    return ParametersImpl(caseInsensitiveKey, values)
 }
 
-operator fun ValuesMap.plus(other: ValuesMap) = when {
+operator fun Parameters.plus(other: Parameters) = when {
     caseInsensitiveKey == other.caseInsensitiveKey -> when {
         this.isEmpty() -> other
         other.isEmpty() -> this
-        else -> ValuesMap.build(caseInsensitiveKey) { appendAll(this@plus); appendAll(other) }
+        else -> Parameters.build(caseInsensitiveKey) { appendAll(this@plus); appendAll(other) }
     }
     else -> throw IllegalArgumentException("It is forbidden to concatenate case sensitive and case insensitive maps")
 }
 
-fun ValuesMap.toMap(): Map<String, List<String>> =
+fun Parameters.toMap(): Map<String, List<String>> =
         entries().associateByTo(LinkedHashMap<String, List<String>>(), { it.key }, { it.value.toList() })
 
-fun ValuesMap.flattenEntries(): List<Pair<String, String>> = entries().flatMap { e -> e.value.map { e.key to it } }
+fun Parameters.flattenEntries(): List<Pair<String, String>> = entries().flatMap { e -> e.value.map { e.key to it } }
 
-fun ValuesMap.filter(keepEmpty: Boolean = false, predicate: (String, String) -> Boolean): ValuesMap {
+fun Parameters.filter(keepEmpty: Boolean = false, predicate: (String, String) -> Boolean): Parameters {
     val entries = entries()
     val values: MutableMap<String, MutableList<String>> = if (caseInsensitiveKey) CaseInsensitiveMap(entries.size) else LinkedHashMap(entries.size)
     entries.forEach { entry ->
@@ -209,10 +209,10 @@ fun ValuesMap.filter(keepEmpty: Boolean = false, predicate: (String, String) -> 
             values.put(entry.key, list)
     }
 
-    return ValuesMapImpl(caseInsensitiveKey, values)
+    return ParametersImpl(caseInsensitiveKey, values)
 }
 
-fun ValuesMapBuilder.appendFiltered(source: ValuesMap, keepEmpty: Boolean = false, predicate: (String, String) -> Boolean) {
+fun ParametersBuilder.appendFiltered(source: Parameters, keepEmpty: Boolean = false, predicate: (String, String) -> Boolean) {
     source.forEach { name, value ->
         val list = value.filterTo(ArrayList(value.size)) { predicate(name, it) }
         if (keepEmpty || list.isNotEmpty())
@@ -227,3 +227,16 @@ private fun entriesEquals(a: Set<Map.Entry<String, List<String>>>, b: Set<Map.En
 private fun entriesHashCode(entries: Set<Map.Entry<String, List<String>>>, seed: Int): Int {
     return seed * 31 + entries.hashCode()
 }
+
+@Deprecated("Use Parameters", replaceWith = ReplaceWith("Parameters"))
+typealias ValuesMap = Parameters
+@Deprecated("Use parametersOf instead", replaceWith = ReplaceWith("parametersOf(*pairs, caseInsensitiveKey = caseInsensitiveKey)"))
+fun valuesOf(vararg pairs: Pair<String, List<String>>, caseInsensitiveKey: Boolean = false) = parametersOf(*pairs, caseInsensitiveKey = caseInsensitiveKey)
+@Deprecated("Use parametersOf instead", replaceWith = ReplaceWith("parametersOf(pair, caseInsensitiveKey = caseInsensitiveKey)"))
+fun valuesOf(pair: Pair<String, List<String>>, caseInsensitiveKey: Boolean = false) = parametersOf(pair, caseInsensitiveKey = caseInsensitiveKey)
+@Deprecated("Use parametersOf instead", replaceWith = ReplaceWith("parametersOf(name, value, caseInsensitiveKey = caseInsensitiveKey)"))
+fun valuesOf(name: String, value: List<String>, caseInsensitiveKey: Boolean = false) = parametersOf(name, value, caseInsensitiveKey)
+@Deprecated("Use parametersOf instead", replaceWith = ReplaceWith("parametersOf()"))
+fun valuesOf() = parametersOf()
+@Deprecated("Use parametersOf instead", replaceWith = ReplaceWith("parametersOf(map, caseInsensitiveKey = caseInsensitiveKey)"))
+fun valuesOf(map: Map<String, Iterable<String>>, caseInsensitiveKey: Boolean = false) = parametersOf(map, caseInsensitiveKey)

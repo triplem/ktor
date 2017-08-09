@@ -7,6 +7,6 @@ class HttpStatusCodeContent(private val value: HttpStatusCode) : FinalContent.No
     override val status: HttpStatusCode
         get() = value
 
-    override val headers: ValuesMap
-        get() = ValuesMap.Empty
+    override val headers: Parameters
+        get() = Parameters.Empty
 }

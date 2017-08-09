@@ -11,7 +11,7 @@ class TextContent(val text: String, val contentType: ContentType, override val s
     private val bytes by lazy { text.toByteArray(contentType.charset() ?: Charsets.UTF_8) }
 
     override val headers by lazy {
-        ValuesMap.build(true) {
+        Parameters.build(true) {
             contentType(contentType)
             contentLength(bytes.size.toLong())
         }

@@ -45,7 +45,7 @@ class TestingHttpClient(private val applicationHost: TestApplicationHost) : Http
             override val channel: ReadChannel
                 get() = call.response.byteContent?.toReadChannel() ?: EmptyReadChannel
 
-            override val headers: ValuesMap
+            override val headers: Parameters
                 get() = call.response.headers.allValues()
 
             override val status: HttpStatusCode

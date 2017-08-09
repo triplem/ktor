@@ -53,8 +53,8 @@ object DefaultHttpClient : HttpClient() {
         override val version: String
             get() = javaNetConnection.getHeaderField(null)?.substringBefore(' ', "")?.takeIf { it.isNotEmpty() } !!
 
-        override val headers: ValuesMap
-            get() = valuesOf(javaNetConnection.headerFields.mapKeys { it.key ?: "" }.filterKeys { it.isNotEmpty() }, true)
+        override val headers: Parameters
+            get() = parametersOf(javaNetConnection.headerFields.mapKeys { it.key ?: "" }.filterKeys { it.isNotEmpty() }, caseInsensitiveKey = true)
 
         override val status: HttpStatusCode
             get() = HttpStatusCode(javaNetConnection.responseCode, javaNetConnection.responseMessage ?: "")

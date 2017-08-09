@@ -4,7 +4,7 @@ import org.jetbrains.ktor.util.*
 import java.util.*
 import javax.servlet.http.*
 
-class ServletApplicationRequestHeaders(val servletRequest: HttpServletRequest) : ValuesMap {
+class ServletApplicationRequestHeaders(val servletRequest: HttpServletRequest) : Parameters {
     override fun getAll(name: String): List<String> {
         val headersEnumeration = servletRequest.getHeaders(name) ?: return emptyList()
         if (!headersEnumeration.hasMoreElements()) return emptyList()

@@ -6,7 +6,7 @@ abstract class ResponseHeaders {
     operator fun contains(name: String): Boolean = getHostHeaderValues(name).isNotEmpty()
     operator fun get(name: String): String? = getHostHeaderValues(name).firstOrNull()
     fun values(name: String): List<String> = getHostHeaderValues(name)
-    fun allValues(): ValuesMap = ValuesMap.build(true) {
+    fun allValues(): Parameters = Parameters.build(true) {
         getHostHeaderNames().forEach {
             appendAll(it, getHostHeaderValues(it))
         }

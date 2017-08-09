@@ -35,7 +35,7 @@ interface HttpResponse : Closeable {
     val connection: HttpConnection
 
     val version: String
-    val headers: ValuesMap
+    val headers: Parameters
     val status: HttpStatusCode
 
     val channel: ReadChannel
@@ -87,7 +87,7 @@ val HttpResponse.responseCode: Int
     get() = status.value
 
 class RequestBuilder {
-    private val headersBuilder = ValuesMapBuilder()
+    private val headersBuilder = ParametersBuilder()
     var body: ((OutputStream) -> Unit)? = null
     var sslSocketFactory: SSLSocketFactory? = null
     var method = HttpMethod.Get

@@ -16,8 +16,8 @@ interface Resource {
     val expires: LocalDateTime?
     val cacheControl: CacheControl?
 
-    val headers: ValuesMap
-        get() = ValuesMap.build(true) {
+    val headers: Parameters
+        get() = Parameters.build(true) {
             contentType(contentType)
             contentLength?.let { contentLength ->
                 contentLength(contentLength)

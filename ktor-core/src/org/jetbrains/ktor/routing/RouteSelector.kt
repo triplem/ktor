@@ -6,7 +6,7 @@ import org.jetbrains.ktor.util.*
 
 data class RouteSelectorEvaluation(val succeeded: Boolean,
                                    val quality: Double,
-                                   val values: ValuesMap = ValuesMap.Empty,
+                                   val values: Parameters = Parameters.Empty,
                                    val segmentIncrement: Int = 0) {
     companion object {
         val Failed = RouteSelectorEvaluation(false, 0.0)
@@ -41,7 +41,7 @@ data class ParameterRouteSelector(val name: String) : RouteSelector(RouteSelecto
     override fun evaluate(context: RoutingResolveContext, index: Int): RouteSelectorEvaluation {
         val param = context.parameters.getAll(name)
         if (param != null)
-            return RouteSelectorEvaluation(true, RouteSelectorEvaluation.qualityParameter, valuesOf(name to param))
+            return RouteSelectorEvaluation(true, RouteSelectorEvaluation.qualityParameter, parametersOf(name to param))
         return RouteSelectorEvaluation.Failed
     }
 
@@ -52,7 +52,7 @@ data class OptionalParameterRouteSelector(val name: String) : RouteSelector(Rout
     override fun evaluate(context: RoutingResolveContext, index: Int): RouteSelectorEvaluation {
         val param = context.parameters.getAll(name)
         if (param != null)
-            return RouteSelectorEvaluation(true, RouteSelectorEvaluation.qualityParameter, valuesOf(name to param))
+            return RouteSelectorEvaluation(true, RouteSelectorEvaluation.qualityParameter, parametersOf(name to param))
         return RouteSelectorEvaluation.Missing
     }
 
@@ -89,7 +89,7 @@ data class UriPartParameterRouteSelector(val name: String, val prefix: String? =
                 else
                     return RouteSelectorEvaluation.Failed
 
-            val values = valuesOf(name to listOf(suffixChecked))
+            val values = parametersOf(name to listOf(suffixChecked))
             return RouteSelectorEvaluation(true, RouteSelectorEvaluation.qualityParameter, values, segmentIncrement = 1)
         }
         return RouteSelectorEvaluation.Failed
@@ -118,7 +118,7 @@ data class UriPartOptionalParameterRouteSelector(val name: String, val prefix: S
                 else
                     return RouteSelectorEvaluation.Missing
 
-            val values = valuesOf(name to listOf(suffixChecked))
+            val values = parametersOf(name to listOf(suffixChecked))
             return RouteSelectorEvaluation(true, RouteSelectorEvaluation.qualityParameter, values, segmentIncrement = 1)
         }
         return RouteSelectorEvaluation.Missing
@@ -139,7 +139,7 @@ object UriPartWildcardRouteSelector : RouteSelector(RouteSelectorEvaluation.qual
 
 data class UriPartTailcardRouteSelector(val name: String = "") : RouteSelector(RouteSelectorEvaluation.qualityWildcard) {
     override fun evaluate(context: RoutingResolveContext, index: Int): RouteSelectorEvaluation {
-        val values = if (name.isEmpty()) valuesOf() else valuesOf(name to context.path.drop(index).map { it })
+        val values = if (name.isEmpty()) parametersOf() else parametersOf(name to context.path.drop(index).map { it })
         val quality = if (index < context.path.size) RouteSelectorEvaluation.qualityWildcard else RouteSelectorEvaluation.qualityMissing
         return RouteSelectorEvaluation(true, quality, values, segmentIncrement = context.path.size - index)
     }

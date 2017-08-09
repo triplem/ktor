@@ -174,7 +174,7 @@ private class Http2Connection(val host: String, val port: Int, val secure: Boole
 private class RequestResponse(override val connection: HttpConnection) : org.jetbrains.ktor.cio.ReadChannel, HttpResponse {
     lateinit var stream: Stream
 
-    private val headersBuilder = ValuesMapBuilder(caseInsensitiveKey = true)
+    private val headersBuilder = ParametersBuilder(caseInsensitiveKey = true)
     private val data = Channel<Pair<ByteBuffer, Callback>>(Channel.UNLIMITED)
     private var current: Pair<ByteBuffer, Callback>? = null
     private val cf = CompletableFuture<HttpStatusCode?>()
@@ -182,7 +182,7 @@ private class RequestResponse(override val connection: HttpConnection) : org.jet
     override val version: String
         get() = "HTTP/2"
 
-    override val headers: ValuesMap by lazy { headersBuilder.build() }
+    override val headers: Parameters by lazy { headersBuilder.build() }
 
     override val status: HttpStatusCode
         get() = cf.getNow(null) ?: throw IllegalStateException("No response yet")

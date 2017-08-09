@@ -521,8 +521,8 @@ abstract class WebSocketHostSuite<THost : ApplicationHost>(hostFactory: Applicat
         return HttpStatusCode(statusCodeString.toInt(), message)
     }
 
-    private fun InputStream.parseHeaders(): ValuesMap {
-        val builder = ValuesMapBuilder(caseInsensitiveKey = true)
+    private fun InputStream.parseHeaders(): Parameters {
+        val builder = ParametersBuilder(caseInsensitiveKey = true)
 
         while (true) {
             val line = readLineISOCrLf()

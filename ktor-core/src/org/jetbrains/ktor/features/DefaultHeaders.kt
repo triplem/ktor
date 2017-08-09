@@ -16,7 +16,7 @@ class DefaultHeaders(config: Configuration) {
     @Volatile private var cachedDateText: String = ZonedDateTime.now(ZoneOffset.UTC).toHttpDateString()
 
     class Configuration {
-        val headers = ValuesMapBuilder()
+        val headers = ParametersBuilder()
         fun header(name: String, value: String) = headers.append(name, value)
     }
 

@@ -77,8 +77,8 @@ class StatusPageTest {
                 call.respond(object : FinalContent.ReadChannelContent() {
                     override val status = HttpStatusCode.NotFound
 
-                    override val headers: ValuesMap
-                        get() = ValuesMap.Empty
+                    override val headers: Parameters
+                        get() = Parameters.Empty
 
                     override fun readFrom(): ReadChannel = fail("Should never reach here")
                 })

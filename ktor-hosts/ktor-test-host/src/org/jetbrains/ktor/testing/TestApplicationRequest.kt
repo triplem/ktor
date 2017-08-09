@@ -61,7 +61,7 @@ class TestApplicationRequest(
     override val headers by lazy {
         val map = headersMap ?: throw Exception("Headers were already acquired for this request")
         headersMap = null
-        valuesOf(map, caseInsensitiveKey = true)
+        parametersOf(map, caseInsensitiveKey = true)
     }
 
     override val cookies = RequestCookies(this)

@@ -7,13 +7,13 @@ import org.jetbrains.ktor.util.*
 
 data class RoutingResolveResult(val succeeded: Boolean,
                                 val entry: Route,
-                                val values: ValuesMap,
+                                val values: Parameters,
                                 val quality: Double)
 
 class RoutingResolveContext(val routing: Route,
                             val call: ApplicationCall,
-                            val parameters: ValuesMap = ValuesMap.Empty, // TODO don't pass parameters and headers, use call instead
-                            val headers: ValuesMap = ValuesMap.Empty) {
+                            val parameters: Parameters = Parameters.Empty, // TODO don't pass parameters and headers, use call instead
+                            val headers: Parameters = Parameters.Empty) {
     val path = parse(call.request.path())
 
     private fun parse(path: String): List<String> {
@@ -96,10 +96,10 @@ class RoutingResolveContext(val routing: Route,
             if (bestResult != null && bestResult.quality > RouteSelectorEvaluation.qualityMissing)
                 return bestResult
 
-            return RoutingResolveResult(true, entry, ValuesMap.Empty, 1.0)
+            return RoutingResolveResult(true, entry, Parameters.Empty, 1.0)
         }
 
-        return bestResult ?: RoutingResolveResult(false, failEntry ?: entry, ValuesMap.Empty, 0.0)
+        return bestResult ?: RoutingResolveResult(false, failEntry ?: entry, Parameters.Empty, 0.0)
     }
 
 }

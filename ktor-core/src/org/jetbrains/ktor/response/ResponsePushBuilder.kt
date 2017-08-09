@@ -6,7 +6,7 @@ import org.jetbrains.ktor.util.*
 
 interface ResponsePushBuilder {
     val url: URLBuilder
-    val headers: ValuesMapBuilder
+    val headers: ParametersBuilder
     var method: HttpMethod
     val versions: MutableList<Version>
 }

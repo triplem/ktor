@@ -17,15 +17,15 @@ internal class NettyHttp2ApplicationRequest(
         val context: ChannelHandlerContext,
         val nettyHeaders: Http2Headers) : BaseApplicationRequest(call) {
 
-    override val headers: ValuesMap by lazy { ValuesMap.build(caseInsensitiveKey = true) { nettyHeaders.forEach { append(it.key.toString(), it.value.toString()) } } }
+    override val headers: Parameters by lazy { Parameters.build(caseInsensitiveKey = true) { nettyHeaders.forEach { append(it.key.toString(), it.value.toString()) } } }
 
     val contentQueue = SuspendQueue<Http2DataFrame>(10)
     private val contentChannel: NettyHttp2ReadChannel = NettyHttp2ReadChannel(contentQueue)
 
-    override val queryParameters: ValuesMap by lazy {
+    override val queryParameters: Parameters by lazy {
         header(":path")?.let { path ->
             parseQueryString(path.substringAfter("?", ""))
-        } ?: ValuesMap.Empty
+        } ?: Parameters.Empty
     }
 
     override val local = object : RequestConnectionPoint {

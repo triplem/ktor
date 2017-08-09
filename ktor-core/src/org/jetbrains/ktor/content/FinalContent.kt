@@ -10,8 +10,8 @@ sealed class FinalContent {
     open val status: HttpStatusCode?
         get() = null
 
-    open val headers: ValuesMap
-        get() = ValuesMap.Empty
+    open val headers: Parameters
+        get() = Parameters.Empty
 
     abstract class NoContent : FinalContent()
 

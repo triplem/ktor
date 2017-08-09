@@ -103,10 +103,10 @@ class Compression(compression: Configuration) {
         }
     }
 
-    private class CompressedResponse(val delegateChannel: () -> ReadChannel, val delegateHeaders: ValuesMap, override val status: HttpStatusCode?, val encoding: String, val encoder: CompressionEncoder) : FinalContent.ReadChannelContent() {
+    private class CompressedResponse(val delegateChannel: () -> ReadChannel, val delegateHeaders: Parameters, override val status: HttpStatusCode?, val encoding: String, val encoder: CompressionEncoder) : FinalContent.ReadChannelContent() {
         override fun readFrom() = encoder.compress(delegateChannel())
         override val headers by lazy {
-            ValuesMap.build(true) {
+            Parameters.build(true) {
                 appendFiltered(delegateHeaders) { name, _ -> !name.equals(HttpHeaders.ContentLength, true) }
                 append(HttpHeaders.ContentEncoding, encoding)
             }
@@ -115,7 +115,7 @@ class Compression(compression: Configuration) {
 
     private class CompressedWriteResponse(val delegate: WriteChannelContent, override val status: HttpStatusCode?, val encoding: String, val encoder: CompressionEncoder) : FinalContent.WriteChannelContent() {
         override val headers by lazy {
-            ValuesMap.build(true) {
+            Parameters.build(true) {
                 appendFiltered(delegate.headers) { name, _ -> !name.equals(HttpHeaders.ContentLength, true) }
                 append(HttpHeaders.ContentEncoding, encoding)
             }

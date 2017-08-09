@@ -3,11 +3,11 @@ package org.jetbrains.ktor.request
 import org.jetbrains.ktor.http.*
 import org.jetbrains.ktor.util.*
 
-fun parseQueryString(query: String, limit: Int = 1000): ValuesMap {
+fun parseQueryString(query: String, limit: Int = 1000): Parameters {
     return if (query.isBlank()) {
-        ValuesMap.Empty
+        Parameters.Empty
     } else {
-        ValuesMap.build {
+        Parameters.build {
             val parameterSegments = query.splitToSequence("&", limit = limit).filter { it.isNotBlank() }
             for (segment in parameterSegments) {
                 val pair = segment.split('=', limit = 2)

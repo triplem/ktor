@@ -5,7 +5,7 @@ import org.jetbrains.ktor.util.*
 
 class ByteArrayContent(private val bytes: ByteArray) : FinalContent.ByteArrayContent() {
     override val headers by lazy {
-        ValuesMap.build(true) {
+        Parameters.build(true) {
             contentLength(bytes.size.toLong())
         }
     }

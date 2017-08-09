@@ -4,9 +4,9 @@ import org.jetbrains.ktor.http.*
 import org.jetbrains.ktor.util.*
 import java.io.*
 
-sealed class PartData(val dispose: () -> Unit, val partHeaders: ValuesMap) {
-    class FormItem(val value: String, dispose: () -> Unit, partHeaders: ValuesMap) : PartData(dispose, partHeaders)
-    class FileItem(val streamProvider: () -> InputStream, dispose: () -> Unit, partHeaders: ValuesMap) : PartData(dispose, partHeaders) {
+sealed class PartData(val dispose: () -> Unit, val partHeaders: Parameters) {
+    class FormItem(val value: String, dispose: () -> Unit, partHeaders: Parameters) : PartData(dispose, partHeaders)
+    class FileItem(val streamProvider: () -> InputStream, dispose: () -> Unit, partHeaders: Parameters) : PartData(dispose, partHeaders) {
         val originalFileName = contentDisposition?.parameter(ContentDisposition.Parameters.FileName)
     }
 

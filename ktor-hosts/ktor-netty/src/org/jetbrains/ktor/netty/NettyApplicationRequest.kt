@@ -20,7 +20,7 @@ internal class NettyApplicationRequest(
 
     override val local = NettyConnectionPoint(httpRequest, context)
     override val queryParameters by lazy { parseQueryString(httpRequest.uri().substringAfter("?", "")) }
-    override val headers: ValuesMap = NettyApplicationRequestHeaders(httpRequest)
+    override val headers: Parameters = NettyApplicationRequestHeaders(httpRequest)
     override val cookies: RequestCookies = NettyApplicationRequestCookies(this)
 
     override fun receiveContent() = NettyHttpIncomingContent(this)

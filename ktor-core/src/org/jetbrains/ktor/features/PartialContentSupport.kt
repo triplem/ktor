@@ -131,18 +131,18 @@ class PartialContentSupport(val maxRangeCount: Int) {
             override fun readFrom() = content.readFrom()
 
             override val headers by lazy {
-                ValuesMap.build(true) {
+                Parameters.build(true) {
                     appendAll(content.headers)
                     acceptRanges()
                 }
             }
         }
 
-        class Single(val get: Boolean, val delegateHeaders: ValuesMap, val source: ReadChannel, val range: LongRange, val fullLength: Long) : RangeChannelProvider() {
+        class Single(val get: Boolean, val delegateHeaders: Parameters, val source: ReadChannel, val range: LongRange, val fullLength: Long) : RangeChannelProvider() {
             override val status: HttpStatusCode? get() = if (get) HttpStatusCode.PartialContent else null
             override fun readFrom() = RangeReadChannel(source, range.start, range.length, closeSource = false)
             override val headers by lazy {
-                ValuesMap.build(true) {
+                Parameters.build(true) {
                     appendFiltered(delegateHeaders) { name, _ -> !name.equals(HttpHeaders.ContentLength, true) }
                     acceptRanges()
                     contentRange(range, fullLength)
@@ -150,13 +150,13 @@ class PartialContentSupport(val maxRangeCount: Int) {
             }
         }
 
-        class Multiple(val get: Boolean, val delegateHeaders: ValuesMap, val source: ReadChannel, val ranges: List<LongRange>, val length: Long, val boundary: String, val contentType: ContentType) : RangeChannelProvider() {
+        class Multiple(val get: Boolean, val delegateHeaders: Parameters, val source: ReadChannel, val ranges: List<LongRange>, val length: Long, val boundary: String, val contentType: ContentType) : RangeChannelProvider() {
             override val status: HttpStatusCode? get() = if (get) HttpStatusCode.PartialContent else null
 
             override fun readFrom() = MultipleRangesReadChannel.create(source, ranges, length, boundary, contentType.toString())
 
-            override val headers: ValuesMap
-                get() = ValuesMap.build(true) {
+            override val headers: Parameters
+                get() = Parameters.build(true) {
                     appendFiltered(delegateHeaders) { name, _ ->
                         !name.equals(HttpHeaders.ContentType, true) && !name.equals(HttpHeaders.ContentLength, true)
                     }
@@ -166,7 +166,7 @@ class PartialContentSupport(val maxRangeCount: Int) {
                 }
         }
 
-        protected fun ValuesMapBuilder.acceptRanges() {
+        protected fun ParametersBuilder.acceptRanges() {
             if (!contains(HttpHeaders.AcceptRanges, RangeUnits.Bytes.unitToken)) {
                 append(HttpHeaders.AcceptRanges, RangeUnits.Bytes.unitToken)
             }

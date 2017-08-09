@@ -16,7 +16,7 @@ private object RootRouteSelector : RouteSelector(RouteSelectorEvaluation.quality
 }
 
 fun routing() = Route(parent = null, selector = RootRouteSelector)
-fun resolve(routing: Route, path: String, parameters: ValuesMap = ValuesMap.Empty): RoutingResolveResult {
+fun resolve(routing: Route, path: String, parameters: Parameters = Parameters.Empty): RoutingResolveResult {
     return withTestApplication {
         RoutingResolveContext(routing, TestApplicationCall(application).apply {
             request.method = HttpMethod.Get
@@ -25,7 +25,7 @@ fun resolve(routing: Route, path: String, parameters: ValuesMap = ValuesMap.Empt
     }
 }
 
-fun resolve(routing: Route, path: String, parameters: ValuesMap = ValuesMap.Empty, headers: ValuesMap = ValuesMap.Empty): RoutingResolveResult {
+fun resolve(routing: Route, path: String, parameters: Parameters = Parameters.Empty, headers: Parameters = Parameters.Empty): RoutingResolveResult {
     return withTestApplication {
         RoutingResolveContext(routing, TestApplicationCall(application).apply {
             request.method = HttpMethod.Get
@@ -343,7 +343,7 @@ class RoutingResolveTest {
         val paramEntry = fooEntry.selectHandle(ParameterRouteSelector("name"))
 
         on("resolving /foo with query string name=value") {
-            val resolveResult = resolve(root, "/foo", valuesOf("name" to listOf("value")))
+            val resolveResult = resolve(root, "/foo", parametersOf("name" to listOf("value")))
 
             it("should successfully resolve") {
                 assertTrue(resolveResult.succeeded)
@@ -371,7 +371,7 @@ class RoutingResolveTest {
         }
 
         on("resolving /foo with multiple parameters") {
-            val resolveResult = resolve(root, "/foo", valuesOf("name" to listOf("value1", "value2")))
+            val resolveResult = resolve(root, "/foo", parametersOf("name" to listOf("value1", "value2")))
 
             it("should successfully resolve") {
                 assertTrue(resolveResult.succeeded)
@@ -428,7 +428,7 @@ class RoutingResolveTest {
         val htmlEntry = fooEntry.selectHandle(HttpHeaderRouteSelector("Accept", "text/html"))
 
         on("resolving /foo with more specific") {
-            val resolveResult = resolve(root, "/foo", headers = valuesOf("Accept" to listOf("text/*, text/html, */*")))
+            val resolveResult = resolve(root, "/foo", headers = parametersOf("Accept" to listOf("text/*, text/html, */*")))
 
             it("should successfully resolve") {
                 assertTrue(resolveResult.succeeded)
@@ -439,7 +439,7 @@ class RoutingResolveTest {
         }
 
         on("resolving /foo with equal preference") {
-            val resolveResult = resolve(root, "/foo", headers = valuesOf("Accept" to listOf("text/plain, text/html")))
+            val resolveResult = resolve(root, "/foo", headers = parametersOf("Accept" to listOf("text/plain, text/html")))
 
             it("should successfully resolve") {
                 assertTrue(resolveResult.succeeded)
@@ -450,7 +450,7 @@ class RoutingResolveTest {
         }
 
         on("resolving /foo with preference of text/plain") {
-            val resolveResult = resolve(root, "/foo", headers = valuesOf("Accept" to listOf("text/plain, text/html; q=0.5")))
+            val resolveResult = resolve(root, "/foo", headers = parametersOf("Accept" to listOf("text/plain, text/html; q=0.5")))
 
             it("should successfully resolve") {
                 assertTrue(resolveResult.succeeded)
@@ -461,7 +461,7 @@ class RoutingResolveTest {
         }
 
         on("resolving /foo with preference of text/html") {
-            val resolveResult = resolve(root, "/foo", headers = valuesOf("Accept" to listOf("text/plain; q=0.5, text/html")))
+            val resolveResult = resolve(root, "/foo", headers = parametersOf("Accept" to listOf("text/plain; q=0.5, text/html")))
 
             it("should successfully resolve") {
                 assertTrue(resolveResult.succeeded)

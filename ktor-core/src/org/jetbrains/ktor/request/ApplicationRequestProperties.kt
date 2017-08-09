@@ -8,7 +8,7 @@ import java.nio.charset.*
 fun ApplicationRequest.header(name: String): String? = headers[name]
 fun ApplicationRequest.queryString(): String = origin.uri.substringAfter('?', "")
 @Deprecated("Use property instead", ReplaceWith("queryParameters"))
-fun ApplicationRequest.queryParameters(): ValuesMap = queryParameters
+fun ApplicationRequest.queryParameters(): Parameters = queryParameters
 fun ApplicationRequest.contentType(): ContentType = header(HttpHeaders.ContentType)?.let { ContentType.parse(it) } ?: ContentType.Any
 fun ApplicationRequest.contentCharset(): Charset? = contentType().charset()
 fun ApplicationRequest.document(): String = path().substringAfterLast('/')

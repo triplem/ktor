@@ -42,7 +42,7 @@ private class JsonContent(val text: String, override val status: HttpStatusCode?
     private val bytes by lazy { text.toByteArray(Charsets.UTF_8) }
 
     override val headers by lazy {
-        ValuesMap.build(true) {
+        Parameters.build(true) {
             contentType(contentType)
             contentLength(bytes.size.toLong())
         }

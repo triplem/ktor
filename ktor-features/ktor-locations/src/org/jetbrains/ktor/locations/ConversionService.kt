@@ -4,7 +4,7 @@ import org.jetbrains.ktor.util.*
 import java.lang.reflect.*
 
 interface ConversionService {
-    fun fromValuesMap(parameters: ValuesMap, name: String, type: Type, optional: Boolean): Any?
+    fun fromParameters(parameters: Parameters, name: String, type: Type, optional: Boolean): Any?
     fun toURI(value: Any?, name: String, optional: Boolean): List<String>
 }
 
@@ -69,7 +69,7 @@ open class DefaultConversionService : ConversionService {
         return convert(values.single(), type)
     }
 
-    override fun fromValuesMap(parameters: ValuesMap, name: String, type: Type, optional: Boolean): Any? {
+    override fun fromParameters(parameters: Parameters, name: String, type: Type, optional: Boolean): Any? {
         val values = parameters.getAll(name)
         return if (values == null) {
             if (!optional) {

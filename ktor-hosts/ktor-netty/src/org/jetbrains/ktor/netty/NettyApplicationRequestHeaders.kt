@@ -3,7 +3,7 @@ package org.jetbrains.ktor.netty
 import io.netty.handler.codec.http.*
 import org.jetbrains.ktor.util.*
 
-class NettyApplicationRequestHeaders(request: HttpRequest) : ValuesMap {
+class NettyApplicationRequestHeaders(request: HttpRequest) : Parameters {
     private val headers: HttpHeaders = request.headers()
     override fun get(name: String): String? = headers.get(name)
     override fun contains(name: String): Boolean = headers.contains(name)

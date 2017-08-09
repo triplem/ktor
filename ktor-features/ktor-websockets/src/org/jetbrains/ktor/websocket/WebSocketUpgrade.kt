@@ -17,8 +17,8 @@ class WebSocketUpgrade(val call: ApplicationCall, val protocol: String? = null, 
     override val status: HttpStatusCode?
         get() = HttpStatusCode.SwitchingProtocols
 
-    override val headers: ValuesMap
-        get() = ValuesMap.build(true) {
+    override val headers: Parameters
+        get() = Parameters.build(true) {
             append(HttpHeaders.Upgrade, "websocket")
             append(HttpHeaders.Connection, "Upgrade")
             append(HttpHeaders.SecWebSocketAccept, encodeBase64(sha1("${key.trim()}258EAFA5-E914-47DA-95CA-C5AB0DC85B11")))

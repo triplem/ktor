@@ -23,7 +23,7 @@ interface Version {
     /**
      * Appends relevant headers to the builder
      */
-    fun appendHeadersTo(builder: ValuesMapBuilder)
+    fun appendHeadersTo(builder: ParametersBuilder)
 }
 
 /**
@@ -76,7 +76,7 @@ data class LastModifiedVersion(val lastModified: LocalDateTime) : Version {
     constructor(lastModified: FileTime) : this(LocalDateTime.ofInstant(lastModified.toInstant(), ZoneId.systemDefault()))
     constructor(lastModified: Date) : this(lastModified.toLocalDateTime())
 
-    override fun appendHeadersTo(builder: ValuesMapBuilder) {
+    override fun appendHeadersTo(builder: ParametersBuilder) {
         builder.lastModified(lastModified.atZone(ZoneOffset.UTC))
     }
 }
@@ -111,7 +111,7 @@ data class EntityTagVersion(val etag: String) : Version {
 
     private fun String.parseMatchTag() = split("\\s*,\\s*".toRegex()).map { it.removePrefix("W/") }.filter { it.isNotEmpty() }.toSet()
 
-    override fun appendHeadersTo(builder: ValuesMapBuilder) {
+    override fun appendHeadersTo(builder: ParametersBuilder) {
         builder.etag(etag)
     }
 }
