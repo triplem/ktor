@@ -3,10 +3,6 @@ package io.ktor.client.pipeline
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.util.*
-import kotlin.collections.List
-import kotlin.collections.forEach
-import kotlin.collections.listOf
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 
